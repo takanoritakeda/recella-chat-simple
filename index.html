@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dify Chat Application with Conversation History">
+  <title>Recella Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+
+    /* ローディング表示（iframe読み込み中） */
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">Loading chat...</div>
+
+  <!--
+    重要：Difyの /chat/ URLを使用することで、
+    左サイドバーに会話履歴が表示されます。
+
+    /chatbot/ URL → チャット画面のみ
+    /chat/ URL → チャット画面 + 会話履歴サイドバー
+
+    YOUR_DIFY_DOMAIN と YOUR_APP_ID を実際の値に置き換えてください
+  -->
+  <iframe
+    id="chat-iframe"
+    src="https://YOUR_DIFY_DOMAIN/chat/YOUR_APP_ID"
+    allow="microphone; camera"
+    onload="document.getElementById('loading').style.display='none'"
+  ></iframe>
+
+  <script>
+    // iframe読み込みタイムアウト処理（10秒）
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      if (loading.style.display !== 'none') {
+        loading.textContent = 'Chat読み込みに時間がかかっています...';
+      }
+    }, 10000);
+  </script>
+</body>
+</html>
