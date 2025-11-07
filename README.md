@@ -1,12 +1,12 @@
 # Recella Chat Simple
 
-Dify iframe埋め込み + Basic認証付きチャットアプリケーション（Cloudflare Pages対応）
+Dify iframe埋め込みチャットアプリケーション（Cloudflare Pages対応）
 
 ## 🌟 特徴
 
-- ✅ **超シンプル実装**（HTML 1ファイル + Basic認証）
+- ✅ **超シンプル実装**（HTML 1ファイルのみ）
 - ✅ **Dify会話履歴表示**（`/chat/` URL使用で左サイドバー表示）
-- ✅ **Basic認証標準装備**（Cloudflare Workers）
+- ✅ **Cloudflare Access対応**（OTP認証など）
 - ✅ **完全無料**（Cloudflare Pages無料プラン）
 - ✅ **GitHub連携自動デプロイ**
 - ✅ **メンテナンスほぼ不要**
@@ -16,8 +16,6 @@ Dify iframe埋め込み + Basic認証付きチャットアプリケーション�
 ```
 recella-chat-simple/
 ├── index.html              # メインHTMLファイル（Dify iframe埋め込み）
-├── functions/
-│   └── _middleware.ts      # Cloudflare Workers Basic認証
 └── README.md               # このファイル
 ```
 
@@ -42,7 +40,7 @@ recella-chat-simple/
 
 1. https://pages.cloudflare.com にアクセス
 2. **「Create a project」** → **「Connect to Git」**
-3. GitHubリポジトリ `recella-chat-simple` を選択
+3. GitHubリポジトリを選択
 4. ビルド設定：
    ```
    Framework preset: None
@@ -51,21 +49,7 @@ recella-chat-simple/
    Root directory: (空欄)
    ```
 
-### 3. 環境変数設定（重要）
-
-Cloudflareダッシュボード → **Settings** → **Environment variables** で以下を追加：
-
-```
-Variable name: BASIC_AUTH_USER
-Value: admin (お好みのユーザー名)
-
-Variable name: BASIC_AUTH_PASSWORD
-Value: your-strong-password-here (強力なパスワードに変更)
-```
-
-**適用環境：** Production / Preview / Development すべてにチェック
-
-### 4. デプロイ実行
+### 3. デプロイ実行
 
 ```bash
 git push origin main
@@ -73,27 +57,27 @@ git push origin main
 
 Cloudflareが自動的にビルド・デプロイを実行します（通常1-2分）。
 
-## 🔐 Basic認証の動作
+## 🔐 アクセス制御（オプション）
 
-デプロイ完了後、以下のURLにアクセス：
+### Cloudflare Access で認証を追加
 
-```
-https://your-project.pages.dev
-```
+サイトへのアクセスを制限したい場合、Cloudflare Accessを使用できます：
 
-**期待される動作：**
-1. ブラウザにBasic認証ダイアログが表示
-2. 設定したユーザー名・パスワードを入力
-3. 認証成功 → Difyチャット画面（会話履歴付き）が表示
+1. Cloudflareダッシュボード → **Zero Trust** → **Access**
+2. **Applications** → **Add an application**
+3. アプリケーションタイプを選択（例：Self-hosted）
+4. 認証方法を選択：
+   - One-time PIN（OTP：メール認証）
+   - GitHub、Google、Azure ADなどのSSO
+   - その他の認証プロバイダー
 
-### テスト用便利URL（開発時のみ）
+**Cloudflare Accessの利点：**
+- ✅ OTP（ワンタイムパスワード）による認証
+- ✅ 複数の認証プロバイダー対応
+- ✅ 無料プランで最大50ユーザーまで
+- ✅ より高度なアクセス制御
 
-```
-https://admin:your-password@your-project.pages.dev
-```
-
-認証ダイアログをスキップして直接アクセス可能
-**注意：** パスワードがURLに含まれるため、本番利用は非推奨
+詳細：https://developers.cloudflare.com/cloudflare-one/applications/
 
 ## 🛠️ ローカル開発
 
@@ -109,21 +93,21 @@ npx http-server
 
 ブラウザで `http://localhost:8000` にアクセス
 
-### 方法2：Cloudflare Wrangler（Basic認証テスト含む）
+### 方法2：Cloudflare Wrangler
 
 ```bash
 # Wranglerインストール
 npm install -g wrangler
 
-# ローカル開発サーバー起動（Basic認証も動作）
+# ローカル開発サーバー起動
 npx wrangler pages dev .
 ```
 
 ## 📊 コスト比較
 
-| プラットフォーム | 月額 | Basic認証 | 帯域幅 | 備考 |
-|-----------------|------|-----------|--------|------|
-| **Cloudflare Pages** | **$0** | ✅ 無料 | 無制限 | **推奨** |
+| プラットフォーム | 月額 | 認証機能 | 帯域幅 | 備考 |
+|-----------------|------|----------|--------|------|
+| **Cloudflare Pages** | **$0** | ✅ Access無料枠 | 無制限 | **推奨** |
 | Vercel (Pro) | $20 | ✅ 標準 | 1TB | - |
 | Vercel (Hobby) | $0 | ❌ 非対応 | 100GB | - |
 | Netlify | $0 | ❌ $19/月 | 100GB | - |
@@ -171,12 +155,6 @@ npx wrangler pages dev .
 2. ブラウザのコンソールでエラー確認
 3. Dify側のCORS設定確認
 
-### Basic認証が動作しない
-
-1. 環境変数が正しく設定されているか確認
-2. Cloudflare Pages → Settings → Environment variables
-3. デプロイ後、環境変数変更時は再デプロイが必要
-
 ### 会話履歴が表示されない
 
 - `/chatbot/` URLではなく `/chat/` URLを使用していますか？
@@ -190,6 +168,7 @@ MIT License
 
 - [Dify](https://dify.ai/) - オープンソースLLMアプリ開発プラットフォーム
 - [Cloudflare Pages](https://pages.cloudflare.com/) - 無料ホスティングサービス
+- [Cloudflare Access](https://www.cloudflare.com/products/zero-trust/access/) - ゼロトラストアクセス制御
 
 ---
 
